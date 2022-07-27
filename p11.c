@@ -1,43 +1,59 @@
 #include <stdio.h>
-int n,c[20][20],i,j,visited[20];
-void main()
-{
-    printf("Enter number of vertices\n");
+int min,cost[100][100],parent[100],i,j,x,y,n;
+ void main()
+ {
+    int count=0,tot=0,flag=0;
+    printf("Enter the number of vertices\n");
     scanf("%d",&n);
-    printf("ENter the cost matrix\n");
-    printf("Enter 999 if no direct edges\n");
+    printf("Enter the cost matrix\n");
+    printf("Enter 999 for no edges ans self loops\n");
     for(i=1;i<=n;i++)
     {
         for(j=1;j<=n;j++)
-        scanf("%d",&c[i][j]);
-        visited[i]=0;
-    }
-    prim();
-}
-void prim()
-{
-    int min,b,a,k,count=0,cost=0;
-    min=999;
-    visited[1]=1;
-    while(count<n-1)
-    {
-        min=999;
-        for(i=1;i<=n;i++)
         {
-            for(j=1;j<=n;j++)
-            {
-                if(visited[i]&&!visited[j]&&min>c[i][j])
-                {
-                    min=c[i][j];
-                    a=i;
-                    b=j;
-                }
-            }
+            scanf("%d",&cost[i][j]);
+            parent[j]=0;
         }
-        printf("%d---->%d=%d\n",a,b,c[a][b]);
-        cost+=c[a][b];
-        visited[b]=1;
-        count++;
     }
-    printf("Total cost of Spanning tree is %d",cost);
+    while(count!=n-1 && min!=999)
+    {
+        find_min();
+        flag=check_cycle(x,y);
+        if(flag==1)
+        {
+            printf("\n%d---->%d=%d\n",x,y,cost[x][y]);
+            count++;
+            tot+=cost[x][y];
+        }
+        cost[x][y]=cost[y][x]=999;
+    }
+    printf("\nThe total cost of minimum spanning tree=%d",tot);
+ }
+
+ void find_min()
+ {
+    min=999;
+    for(i=1;i<=n;i++)
+    {
+        for(j=1;j<=n;j++)
+        if(cost[i][j]<min)
+        {
+            min=cost[i][j];
+            x=i;
+            y=j;
+        }
+    }
+ }
+
+int check_cycle(int x,int y)
+{
+    if((parent[x]==parent[y]) && (parent[x]!=0))
+    return 0;
+    else if(parent[x]==0 && parent[y]==0)
+    parent[x]=parent[y]=x;
+    else if(parent[x]==0)
+    parent[x]=parent[y];
+    else if(parent[x]!=parent[y])
+    parent[y]=parent[x];
+    return 1;
 }
